@@ -1,99 +1,213 @@
-# Spring Cloud Config — Projeto de Exemplo (UCSAL)
+🟦 SPRING CLOUD CONFIG — Projeto da Atividade
 
-Este repositório contém a documentação unificada para o exercício de Spring Cloud Config usado na disciplina. Ele descreve os três repositórios do trabalho e como rodar/testar a solução localmente.
+Este repositório contém a implementação completa de um ambiente utilizando Spring Cloud Config, com Config Server, cliente account-service, configuração externalizada, perfis dev/prod, e demonstração de proteção de dados sensíveis.
 
----
+O projeto segue exatamente todos os requisitos descritos no enunciado da atividade.
 
-## Sumário
-1. Propósito do projeto
-2. Repositórios
-   - config-repo (arquivos .yml)
-   - config-server (Spring Cloud Config Server)
-   - account-service (cliente que consome configs)
-3. Conceitos (configuração externalizada e centralizada)
-4. Por que usar Config Server em um banco digital
-5. Como rodar (passo-a-passo)
-6. Testes (refresh dinâmico)
-7. Proteção de segredos (exemplos)
-8. Entrega / links
+📌 1. Propósito e Funcionalidade do Projeto
 
----
+O objetivo deste projeto é demonstrar, na prática, como utilizar o Spring Cloud Config para centralizar e externalizar configurações de aplicações distribuídas.
+Através desse mecanismo, múltiplos serviços conseguem:
 
-## 1. Propósito do projeto
-Demonstrar o uso do Spring Cloud Config para **externalizar** e **centralizar** configurações de múltiplos microserviços (neste caso, um `account-service`) em diferentes perfis (dev, prod). O objetivo é mostrar como os serviços podem obter suas configurações sem embutir segredos no código e como aplicar mudanças dinamicamente.
+Ler configurações de um único lugar
 
----
+Atualizar valores sem reiniciar a aplicação
 
-## 2. Repositórios
-**Atenção:** Este README agrega documentação dos três repositórios necessários:
-- `config-repo` — arquivos YAML com as configurações (application.yml, account-service-dev.yml, account-service-prod.yml).
-- `config-server` — aplicação Spring Boot com `@EnableConfigServer`, apontando para o `config-repo`.
-- `account-service` — cliente Spring Boot que consome configurações do Config Server e expõe endpoints REST (`/greeting`, `/accounts`).
+Alternar entre ambientes (dev/prod)
 
----
+Proteger dados sensíveis (senhas, tokens, chaves)
 
-## 3. Conceitos
-**Configuração externalizada:** manter configurações fora do código-fonte (arquivos, serviços de segredos, variáveis de ambiente), permitindo alterar comportamento sem recompilar.  
-**Configuração centralizada:** unificar as configurações de vários serviços em um único ponto (Config Server), com versionamento (Git) e separação por perfis (dev/prod).
+Nesse projeto, o serviço account-service consome suas configurações a partir do Config Server, que por sua vez lê seus arquivos de configuração armazenados em um repositório Git.
 
----
+🏦 2. Por que isso é necessário em um banco digital?
 
-## 4. Por que usar Config Server em um banco digital
-- Consistência entre ambientes (dev/homolog/prod).  
-- Maior segurança (evita espalhar senhas no código).  
-- Mudanças rápidas sem redeploy (reduz downtime).  
-- Auditoria via commits no Git (quem alterou, quando).  
-- Escalabilidade operacional.
+No contexto de um banco digital, as aplicações são distribuídas e executam em múltiplos ambientes:
 
----
+Desenvolvimento (dev)
 
-## 5. Como rodar (passo-a-passo resumido)
+Homologação (hml)
 
-### 5.1 Rodar o Config Server
-1. Entrar na pasta do projeto:
+Produção (prod)
+
+Ter configurações espalhadas dentro de vários arquivos locais implica em:
+
+❌ risco de inconsistência
+❌ dificuldade para dar manutenção
+❌ risco de senhas expostas
+❌ problemas ao escalar múltiplas instâncias
+
+Portanto, o Spring Cloud Config resolve isso permitindo:
+
+✔ Configurações externalizadas
+✔ Todas centralizadas em um único local seguro
+✔ Controle de versionamento via Git
+✔ Alterações aplicadas dinamicamente (sem restart)
+✔ Segurança e auditoria para dados sensíveis
+
+Isso deixa o ambiente mais seguro, organizado e confiável, algo essencial para um sistema financeiro.
+
+🧠 3. Conceito de Configuração Externalizada
+
+Configuração externalizada significa que as configurações não ficam dentro da aplicação, como no application.yml.
+Em vez disso, elas ficam fora, em:
+
+Repositórios Git
+
+Variáveis de ambiente
+
+Vaults
+
+Servidores de configuração
+
+Benefícios:
+
+Permite mudar configs sem recompilar a aplicação
+
+Evita expor senhas dentro do projeto
+
+Permite usar versões diferentes das configs para cada ambiente
+
+No nosso caso, as configs estão no Git.
+
+🏛️ 4. Conceito de Configuração Centralizada
+
+Configuração centralizada significa que todos os serviços consultam um único servidor para pegar suas configurações.
+
+Esse servidor é o Config Server.
+
+Vantagens:
+
+✔ Manutenção mais simples
+✔ Garantia de consistência entre serviços
+✔ Ações de auditoria
+✔ Facilidade para escalar microserviços
+✔ Simplificação na troca de ambiente dev → prod
+
+⚙️ 5. O que foi implementado
+✔ Config Server
+
+Configurado em config-server/
+
+Apontando para este repositório Git
+
+Disponibiliza configs via endpoint:
+
+http://localhost:8888/account-service/dev
+http://localhost:8888/account-service/prod
+
+✔ Cliente (account-service)
+
+Serviço Java Spring Boot que consome o Config Server
+
+Utiliza bootstrap.yml para buscar configurações externas
+
+Inclui endpoint de teste:
+
+GET /greeting
+
+
+que lê o valor do Git de acordo com o perfil
+
+Implementação de CRUD simples:
+
+GET /accounts
+GET /accounts/{id}
+POST /accounts
+
+✔ Perfis DEV e PROD separados
+
+Arquivos no repositório:
+
+account-service-dev.yml
+account-service-prod.yml
+
+
+Cada perfil possui configurações distintas como:
+
+Porta
+
+Mensagens personalizadas
+
+Configuração de banco (fictícia para fins acadêmicos)
+
+✔ Refresh dinâmico
+
+O cliente possui:
+
+@RefreshScope
+
+
+Permitindo atualizar configurações sem reiniciar a aplicação usando:
+
+POST http://localhost:8081/actuator/refresh
+
+🔐 6. Como proteger configurações sensíveis
+
+Esta parte é teórica e explicativa, conforme solicitado na atividade.
+
+Métodos recomendados:
+1. Não colocar senhas em repositórios Git públicos (principal regra)
+
+Sempre use variáveis de ambiente ou Vault.
+
+2. Spring Cloud Config + criptografia
+
+O Config Server oferece:
+
+Criptografia assimétrica (chave pública/privada)
+
+Criptografia simétrica (chave secreta)
+
+Pode-se usar:
+
+encrypt.key = minhaChaveSecreta
+
+
+E criptografar valores como:
+
+password: '{cipher}AF1223ABCF9822XXX...'
+
+3. HashiCorp Vault
+
+Ferramenta profissional usada em bancos.
+
+Integra automaticamente com Spring Cloud Config.
+
+4. Variáveis de ambiente
+
+Ideal para Docker e Kubernetes:
+
+DB_PASSWORD=${DB_PASSWORD}
+
+🗂️ 7. Estrutura do Repositório
+config-repo/
+│
+├── account-service/
+│   ├── src/
+│   ├── pom.xml
+│   ├── README.md
+│
+├── config-server/
+│   ├── src/
+│   ├── pom.xml
+│   ├── README.md
+│
+├── account-service-dev.yml
+├── account-service-prod.yml
+└── README.md   ← este arquivo
+
+🚀 8. Como rodar o projeto
+1. Iniciar o Config Server
 cd config-server
-
-2. Build e run:
-mvn clean package
 mvn spring-boot:run
 
-3. Teste:
-http://localhost:8888/account-service/dev
-
-### 5.2 Rodar o Account Service (cliente)
-1. Entrar na pasta:
+2. Iniciar o account-service com perfil DEV
 cd account-service
-
-2. Rodar com perfil dev:
-mvn clean package
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
-3. Endpoints:
-- `GET http://localhost:8081/greeting` → mensagem do Config Server
-- `GET http://localhost:8081/accounts` → lista mockada
+Testar:
+http://localhost:8081/greeting
 
----
+📄 9. Conclusão
 
-## 6. Teste de refresh dinâmico (sem restart)
-1. No Git (config-repo), abra `account-service-dev.yml` e altere `myapp.greeting` (por exemplo: "Olá DEV - Atualizado"). Commit & push.  
-2. No cliente (account-service) rodando, dispare:
-curl -X POST http://localhost:8081/actuator/refresh
-3. Verifique:
-curl http://localhost:8081/greeting
-
-A resposta deve mostrar a nova mensagem sem reiniciar o serviço.
-
-> Observação: O `account-service` precisa ter `@RefreshScope` no controller/bean que usa as propriedades e `management.endpoints.web.exposure.include: "*"` habilitado para o actuator (somente em ambiente de estudo).
-
----
-
-## 7. Proteção de segredos (resumo prático)
-### 7.1 Criptografia embutida (exemplo rápido)
-No `config-server/src/main/resources/application.yml` adicione (apenas para demonstração local):
-```yaml
-encrypt:
-key: minha_chave_demo_123456
-Encriptar:
-curl -X POST -d 'minhaSenhaSecreta' http://localhost:8888/encrypt
-Descriptografar:
-curl -X POST -d '{cipher}...' http://localhost:8888/decrypt
+Este projeto demonstra a implementação completa de configuração externalizada, centralizada, versionada, com múltiplos perfis e suporte a refresh dinâmico — tudo essencial para sistemas modernos e principalmente para ambientes críticos como bancos digitais.
