@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: account-service
+
+server:
+  port: 8081
+
+datasource:
+  url: jdbc:h2:mem:accountdb-dev
+  username: sa
+  password: devpass
+
+myapp:
+  greeting: "Olá DEV - Account Service"

@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: account-service
+
+server:
+  port: 8081
+
+datasource:
+  url: jdbc:postgresql://db-prod:5432/accountdb
+  username: prod_user
+  password: SENHA_AQUI
+
+myapp:
+  greeting: "Olá PROD - Account Service"
