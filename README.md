@@ -44,23 +44,17 @@ Isso deixa o ambiente mais seguro, organizado e confiável, algo essencial para 
 Configuração externalizada significa que as configurações não ficam dentro da aplicação, como no application.yml.
 Em vez disso, elas ficam fora, em:
 
-Repositórios Git
-
-Variáveis de ambiente
-
-Vaults
-
-Servidores de configuração
+• Repositórios Git
+• Variáveis de ambiente
+• Vaults
+• Servidores de configuração
 
 Benefícios:
 
-Permite mudar configs sem recompilar a aplicação
-
-Evita expor senhas dentro do projeto
-
-Permite usar versões diferentes das configs para cada ambiente
-
-No nosso caso, as configs estão no Git.
+• Permite mudar configs sem recompilar a aplicação
+• Evita expor senhas dentro do projeto
+• Permite usar versões diferentes das configs para cada ambiente
+• No nosso caso, as configs estão no Git.
 
 4. Conceito de Configuração Centralizada
 
@@ -85,8 +79,8 @@ Apontando para este repositório Git
 
 Disponibiliza configs via endpoint:
 
-http://localhost:8888/account-service/dev
-http://localhost:8888/account-service/prod
+• http://localhost:8888/account-service/dev
+• http://localhost:8888/account-service/prod
 
 ✔ Cliente (account-service)
 
@@ -96,43 +90,38 @@ Utiliza bootstrap.yml para buscar configurações externas
 
 Inclui endpoint de teste:
 
-GET /greeting
-
+• GET /greeting
 
 que lê o valor do Git de acordo com o perfil
 
 Implementação de CRUD simples:
 
-GET /accounts
-GET /accounts/{id}
-POST /accounts
+• GET /accounts
+• GET /accounts/{id}
+• POST /accounts
 
 ✔ Perfis DEV e PROD separados
 
 Arquivos no repositório:
 
-account-service-dev.yml
-account-service-prod.yml
+• account-service-dev.yml
+• account-service-prod.yml
 
 
 Cada perfil possui configurações distintas como:
 
-Porta
-
-Mensagens personalizadas
-
-Configuração de banco (fictícia para fins acadêmicos)
-
+• Porta
+• Mensagens personalizadas
+• Configuração de banco (fictícia para fins acadêmicos)
 ✔ Refresh dinâmico
 
 O cliente possui:
 
 @RefreshScope
 
-
 Permitindo atualizar configurações sem reiniciar a aplicação usando:
 
-POST http://localhost:8081/actuator/refresh
+• POST http://localhost:8081/actuator/refresh
 
 6. Como proteger configurações sensíveis
 
@@ -147,9 +136,9 @@ Sempre use variáveis de ambiente ou Vault.
 
 O Config Server oferece:
 
-Criptografia assimétrica (chave pública/privada)
+• Criptografia assimétrica (chave pública/privada)
 
-Criptografia simétrica (chave secreta)
+• Criptografia simétrica (chave secreta)
 
 Pode-se usar:
 
