@@ -2,14 +2,13 @@ spring:
   application:
     name: account-service
 
-server:
-  port: 8081
-
-spring:
   datasource:
     url: jdbc:h2:mem:accountdb-dev
     username: sa
     password: devpass
+
+server:
+  port: 8081
 
 myapp:
   greeting: "Olá DEV - Account Service"
